@@ -1,74 +1,180 @@
+# Hearth Bank
 
-# Hearth Bank — Bank Management System
+A responsive banking dashboard simulation built with React. Hearth Bank provides a simple interface for viewing account information, managing simulated deposits and withdrawals, and reviewing transaction history.
 
-A responsive, frontend-only bank management application built with React and Vite. The project simulates basic banking operations and demonstrates React state management, reusable components, routing, form validation, and browser storage.
+> **Note:** This is a frontend educational project. It does not connect to a real bank, process real payments, or perform actual financial transactions.
 
-## Planned Features
+## Screenshots
 
-- Account dashboard with balance and account information
-- Deposit and withdrawal operations with validation
-- Transaction history with transaction dates
-- Shared account state using Context API
-- Persistent demo data using localStorage
-- Withdrawal confirmation and input auto-focus
-- Responsive UI with a custom Bootstrap-based color theme
+### Dashboard
+![Hearth Bank Dashboard](docs/screenshots/dashboard.png)
 
-## Tech Stack
+![Hearth Bank Dashboard](docs/screenshots/dashboard2.png)
 
-- React
-- Vite
-- Bootstrap
-- React Router DOM
-- Lucide React
+### Deposit
+![Deposit Page](docs/screenshots/deposit.png)
+
+### Withdraw
+![Withdraw Page](docs/screenshots/withdraw.png)
+
+### Transaction History
+![Transaction History](docs/screenshots/transactions.png)
+
+## Features
+
+- **Dashboard:** View account balance, total deposits, total withdrawals, and recent transactions.
+- **Deposit:** Add a simulated deposit with an optional description.
+- **Withdraw:** Make a simulated withdrawal with balance validation and a confirmation prompt.
+- **Transaction History:** Review previous transactions.
+- **Search and Filtering:** Find transactions using the available search and filter controls.
+- **Shared State Management:** Manage banking data across pages using React Context API.
+- **Local Storage Persistence:** Keep simulated account data in the browser after refreshing the page.
+- **Form Validation:** Validate deposit and withdrawal amounts.
+- **Responsive Layout:** Adapt the interface to different screen sizes.
+
+## Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| React | User interface |
+| Vite | Development server and build tool |
+| JavaScript | Application logic |
+| Bootstrap | UI styling utilities |
+| Custom CSS | Application layout and styling |
+| React Router DOM | Page navigation |
+| Context API | Shared application state |
+| localStorage | Browser-side data persistence |
+| Lucide React | Icons |
 
 ## Getting Started
 
+Follow these steps to run the project locally.
+
 ### Prerequisites
 
-- Node.js and npm
+Make sure you have installed:
+
+- [Node.js](https://nodejs.org/)
+- npm (included with Node.js)
 - Git
 
-### Installation
+### 1. Clone the repository
 
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
-cd bank-management
+git clone https://github.com/malihamohit1100/hearth-bank.git
+```
+
+### 2. Navigate to the project directory
+
+```bash
+cd hearth-bank
+```
+
+### 3. Install dependencies
+
+```bash
 npm install
 ```
 
-### Environment Setup
-
-Copy `.env.example` to `.env` and adjust the values if needed.
-
-### Run the Development Server
+### 4. Start the development server
 
 ```bash
 npm run dev
 ```
 
-### Create a Production Build
+Open the local URL displayed in your terminal to view the application.
+
+### 5. Create a production build
 
 ```bash
 npm run build
 ```
 
-### Preview the Production Build
+Vite generates the production-ready files inside the `dist/` directory.
 
-```bash
-npm run preview
+## Project Structure
+
+```text
+bank-management/
+│
+├── public/
+│
+├── docs/
+│   └── screenshots/
+│       ├── dashboard.png
+│       ├── dashboard2.png
+│       ├── deposit.png
+│       ├── withdraw.png
+│       └── transactions.png
+│
+├── src/
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   └── BalanceCard.jsx
+│   │
+│   ├── context/
+│   │   └── BankContext.jsx
+│   │
+│   ├── pages/
+│   │   ├── Dashboard.jsx
+│   │   ├── Deposit.jsx
+│   │   ├── Withdraw.jsx
+│   │   └── Transactions.jsx
+│   │
+│   ├── App.jsx
+│   ├── index.css
+│   └── main.jsx
+│
+├── .env.example
+├── .gitignore
+├── index.html
+├── package.json
+├── package-lock.json
+└── README.md
 ```
 
-## Color Palette
+## State Management and Data Persistence
 
-- Peach: `#FFDBBB`
-- Beige: `#CCBEB1`
-- Muted brown: `#997E67`
-- Deep brown: `#664930`
+Hearth Bank uses React Context API to share account information and transaction data between the application pages.
 
-## Project Scope
+The application stores its simulated banking data in the browser's `localStorage`, allowing the data to remain available after a page refresh in the same browser.
 
-This is a simulated banking interface for educational and portfolio purposes. It does not connect to a real bank, backend, or database and does not perform actual financial transactions.
+This is client-side demonstration data. It is not stored in a backend database and should not be used for real financial records.
 
-## License
+To reset the locally stored demo data, open the browser developer console and run:
 
-MIT
+```javascript
+localStorage.removeItem('hearth-bank-data');
+location.reload();
+```
+
+## Limitations
+
+- No backend server or database integration.
+- No real bank account connection.
+- No actual money transfers or payment processing.
+- No user authentication or authorization.
+- Data is stored locally in the browser and is specific to that browser.
+
+## Learning Outcomes
+
+Through this project, I practiced:
+
+- Building reusable React components.
+- Managing shared state with Context API.
+- Working with React Hooks such as `useState`, `useEffect`, and `useRef`.
+- Implementing client-side routing with React Router.
+- Handling forms and validating user input.
+- Persisting application data with `localStorage`.
+- Organizing a React project into components, pages, and context.
+- Creating a responsive user interface.
+
+## Author
+
+**Maliha Mohit**
+
+- LinkedIn: [Maliha Mohit](https://www.linkedin.com/in/maliha-mohit-4375842b6/)
+
+---
+
+*Hearth Bank is an educational frontend project developed for learning and portfolio demonstration purposes.*
