@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import BalanceCard from '../components/BalanceCard';
+import { useBank } from '../context/BankContext';
 
 const demoTransactions = [
   {
@@ -59,15 +60,20 @@ const dateFormat = (date) =>
   });
 
 export default function Dashboard() {
+  const {
+    balance,
+    totalDeposited,
+    totalWithdrawn,
+    transactions,
+  } = useBank();
+
+  const recentTransactions = transactions.slice(0, 4);
+    
   const account = {
     holder: 'Maliha Mohit',
     number: '•••• •••• 4821',
     type: 'Personal Savings',
   };
-
-  const totalDeposited = 23500;
-  const totalWithdrawn = 3700;
-  const balance = 19800;
 
   return (
     <>
@@ -119,11 +125,11 @@ export default function Dashboard() {
         <div className="row g-3">
           <div className="col-12 col-md-6 col-xl-4">
             <BalanceCard
-              title="Available balance"
+              title="Available Balance"
               amount={money(balance)}
               icon={Wallet}
               variant="primary"
-              description="Current simulated balance"
+              description="Your current account balance"
             />
           </div>
 

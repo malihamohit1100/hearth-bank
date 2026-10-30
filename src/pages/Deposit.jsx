@@ -1,6 +1,11 @@
 
-import { useState } from 'react';
-import { ArrowDownToLine, Wallet, ShieldCheck } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import {
+  ArrowDownToLine,
+  Wallet,
+  ShieldCheck,
+} from 'lucide-react';
+import { useBank } from '../context/BankContext';
 
 const formatCurrency = (amount) =>
   new Intl.NumberFormat('en-BD', {
@@ -10,34 +15,43 @@ const formatCurrency = (amount) =>
   }).format(amount);
 
 export default function Deposit() {
+  const { deposit } = useBank();
+
+  const amountRef = useRef(null);
+
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
 
+  useEffect(() => {
+    amountRef.current?.focus();
+  }, []);
+
   const handleSubmit = (event) => {
     event.preventDefault();
+
     setError('');
     setMessage('');
 
-    const numericAmount = Number(amount);
+    const result = deposit(
+      amount,
+      description || 'Cash Deposit'
+    );
 
-    if (!amount || !Number.isFinite(numericAmount) || numericAmount <= 0) {
-      setError('Please enter a valid amount greater than zero.');
-      return;
-    }
-
-    if (numericAmount > 1000000) {
-      setError('The maximum deposit amount is ৳10,00,000.');
+    if (!result.success) {
+      setError(result.message);
+      amountRef.current?.focus();
       return;
     }
 
     setMessage(
-      `Your deposit of ${formatCurrency(numericAmount)} has been validated. Transaction processing will be connected in the next stage.`
+      `${result.message} ${formatCurrency(Number(amount))} has been added to your account.`
     );
 
     setAmount('');
     setDescription('');
+    amountRef.current?.focus();
   };
 
   return (
@@ -69,9 +83,11 @@ export default function Deposit() {
                 <label htmlFor="deposit-amount" className="form-label">
                   Deposit amount (BDT)
                 </label>
+
                 <div className="amount-input-wrapper">
                   <span>৳</span>
                   <input
+                    ref={amountRef}
                     id="deposit-amount"
                     type="number"
                     className="form-control amount-input"
@@ -88,6 +104,7 @@ export default function Deposit() {
                 <label htmlFor="deposit-description" className="form-label">
                   Description <span className="optional-label">(Optional)</span>
                 </label>
+
                 <input
                   id="deposit-description"
                   type="text"
@@ -113,7 +130,7 @@ export default function Deposit() {
 
               <button type="submit" className="operation-submit deposit-submit">
                 <ArrowDownToLine size={18} />
-                Continue Deposit
+                Confirm Deposit
               </button>
             </form>
           </div>
@@ -124,13 +141,16 @@ export default function Deposit() {
             <div className="info-icon">
               <Wallet size={22} />
             </div>
+
             <h3>Account information</h3>
             <p className="info-account-name">Personal Savings</p>
             <p className="info-account-number">•••• •••• 4821</p>
+
             <div className="info-divider" />
+
             <div className="info-security">
               <ShieldCheck size={19} />
-              <span>Your information stays within this demo application.</span>
+              <span>Your deposit will immediately update your demo account balance.</span>
             </div>
           </div>
         </div>

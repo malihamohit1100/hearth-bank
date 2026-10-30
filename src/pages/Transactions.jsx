@@ -3,59 +3,10 @@ import { useState } from 'react';
 import {
   ArrowDownLeft,
   ArrowUpRight,
-  ArrowDownToLine,
-  ArrowUpFromLine,
   Search,
   ReceiptText,
 } from 'lucide-react';
-
-const demoTransactions = [
-  {
-    id: 'TXN-1005',
-    title: 'Salary Deposit',
-    description: 'Monthly salary',
-    type: 'Deposit',
-    date: '2026-10-26',
-    amount: 15000,
-    status: 'Completed',
-  },
-  {
-    id: 'TXN-1004',
-    title: 'Grocery Shopping',
-    description: 'Personal expenses',
-    type: 'Withdrawal',
-    date: '2026-10-25',
-    amount: 2500,
-    status: 'Completed',
-  },
-  {
-    id: 'TXN-1003',
-    title: 'Savings Deposit',
-    description: 'Monthly savings',
-    type: 'Deposit',
-    date: '2026-10-23',
-    amount: 5000,
-    status: 'Completed',
-  },
-  {
-    id: 'TXN-1002',
-    title: 'Utility Bill',
-    description: 'Electricity bill',
-    type: 'Withdrawal',
-    date: '2026-10-21',
-    amount: 1200,
-    status: 'Completed',
-  },
-  {
-    id: 'TXN-1001',
-    title: 'Cash Deposit',
-    description: 'Additional funds',
-    type: 'Deposit',
-    date: '2026-10-19',
-    amount: 3500,
-    status: 'Completed',
-  },
-];
+import { useBank } from '../context/BankContext';
 
 const formatCurrency = (amount) =>
   new Intl.NumberFormat('en-BD', {
@@ -65,17 +16,19 @@ const formatCurrency = (amount) =>
   }).format(amount);
 
 const formatDate = (date) =>
-  new Date(`${date}T00:00:00`).toLocaleDateString('en-GB', {
+  new Date(date).toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
   });
 
 export default function Transactions() {
+  const { transactions, totalDeposited, totalWithdrawn } = useBank();
+
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
 
-  const filteredTransactions = demoTransactions.filter((transaction) => {
+  const filteredTransactions = transactions.filter((transaction) => {
     const matchesFilter =
       filter === 'All' || transaction.type === filter;
 
@@ -106,26 +59,20 @@ export default function Transactions() {
       <div className="transaction-summary">
         <div>
           <span>Total transactions</span>
-          <strong>{demoTransactions.length}</strong>
+          <strong>{transactions.length}</strong>
         </div>
+
         <div>
           <span>Total deposits</span>
           <strong className="summary-deposit">
-            {formatCurrency(
-              demoTransactions
-                .filter((item) => item.type === 'Deposit')
-                .reduce((total, item) => total + item.amount, 0)
-            )}
+            {formatCurrency(totalDeposited)}
           </strong>
         </div>
+
         <div>
           <span>Total withdrawals</span>
           <strong className="summary-withdraw">
-            {formatCurrency(
-              demoTransactions
-                .filter((item) => item.type === 'Withdrawal')
-                .reduce((total, item) => total + item.amount, 0)
-            )}
+            {formatCurrency(totalWithdrawn)}
           </strong>
         </div>
       </div>
@@ -195,6 +142,7 @@ export default function Transactions() {
                             <ArrowUpRight size={18} />
                           )}
                         </div>
+
                         <div>
                           <strong>{transaction.title}</strong>
                           <span>{transaction.description}</span>
@@ -203,12 +151,16 @@ export default function Transactions() {
                     </td>
 
                     <td className="transaction-id">{transaction.id}</td>
-                    <td className="transaction-date">{formatDate(transaction.date)}</td>
+                    <td className="transaction-date">
+                      {formatDate(transaction.date)}
+                    </td>
+
                     <td>
                       <span className="transaction-status">
                         {transaction.status}
                       </span>
                     </td>
+
                     <td
                       className={`text-end transaction-amount ${
                         isDeposit ? 'amount-deposit' : 'amount-withdraw'
@@ -233,7 +185,7 @@ export default function Transactions() {
         </div>
 
         <div className="transaction-footer">
-          Showing {filteredTransactions.length} of {demoTransactions.length} transactions
+          Showing {filteredTransactions.length} of {transactions.length} transactions
         </div>
       </div>
     </section>

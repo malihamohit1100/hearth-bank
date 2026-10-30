@@ -1,8 +1,12 @@
 
-import { useState } from 'react';
-import { ArrowUpFromLine, Wallet, AlertCircle, ShieldCheck } from 'lucide-react';
-
-const DEMO_BALANCE = 19800;
+import { useEffect, useRef, useState } from 'react';
+import {
+  ArrowUpFromLine,
+  Wallet,
+  AlertCircle,
+  ShieldCheck,
+} from 'lucide-react';
+import { useBank } from '../context/BankContext';
 
 const formatCurrency = (amount) =>
   new Intl.NumberFormat('en-BD', {
@@ -12,13 +16,22 @@ const formatCurrency = (amount) =>
   }).format(amount);
 
 export default function Withdraw() {
+  const { balance, withdraw } = useBank();
+
+  const amountRef = useRef(null);
+
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
 
+  useEffect(() => {
+    amountRef.current?.focus();
+  }, []);
+
   const handleSubmit = (event) => {
     event.preventDefault();
+
     setError('');
     setMessage('');
 
@@ -26,11 +39,13 @@ export default function Withdraw() {
 
     if (!amount || !Number.isFinite(numericAmount) || numericAmount <= 0) {
       setError('Please enter a valid amount greater than zero.');
+      amountRef.current?.focus();
       return;
     }
 
-    if (numericAmount > DEMO_BALANCE) {
+    if (numericAmount > balance) {
       setError('Insufficient balance. Please enter a smaller amount.');
+      amountRef.current?.focus();
       return;
     }
 
@@ -40,12 +55,24 @@ export default function Withdraw() {
 
     if (!confirmed) return;
 
+    const result = withdraw(
+      numericAmount,
+      description || 'Cash Withdrawal'
+    );
+
+    if (!result.success) {
+      setError(result.message);
+      amountRef.current?.focus();
+      return;
+    }
+
     setMessage(
-      `Your withdrawal of ${formatCurrency(numericAmount)} has been validated. Balance updates will be connected in the next stage.`
+      `${result.message} ${formatCurrency(numericAmount)} has been deducted from your account.`
     );
 
     setAmount('');
     setDescription('');
+    amountRef.current?.focus();
   };
 
   return (
@@ -75,7 +102,7 @@ export default function Withdraw() {
             <div className="available-balance">
               <div>
                 <span>Available balance</span>
-                <strong>{formatCurrency(DEMO_BALANCE)}</strong>
+                <strong>{formatCurrency(balance)}</strong>
               </div>
               <Wallet size={23} />
             </div>
@@ -85,9 +112,11 @@ export default function Withdraw() {
                 <label htmlFor="withdraw-amount" className="form-label">
                   Withdrawal amount (BDT)
                 </label>
+
                 <div className="amount-input-wrapper">
                   <span>৳</span>
                   <input
+                    ref={amountRef}
                     id="withdraw-amount"
                     type="number"
                     className="form-control amount-input"
@@ -104,6 +133,7 @@ export default function Withdraw() {
                 <label htmlFor="withdraw-description" className="form-label">
                   Description <span className="optional-label">(Optional)</span>
                 </label>
+
                 <input
                   id="withdraw-description"
                   type="text"
@@ -134,7 +164,7 @@ export default function Withdraw() {
 
               <button type="submit" className="operation-submit withdraw-submit">
                 <ArrowUpFromLine size={18} />
-                Continue Withdrawal
+                Confirm Withdrawal
               </button>
             </form>
           </div>
@@ -145,11 +175,14 @@ export default function Withdraw() {
             <div className="info-icon">
               <ShieldCheck size={22} />
             </div>
+
             <h3>Secure withdrawal</h3>
             <p className="info-description">
-              A confirmation step is required before proceeding with a withdrawal.
+              Your current balance is checked before a withdrawal is processed.
             </p>
+
             <div className="info-divider" />
+
             <div className="info-security">
               <ShieldCheck size={19} />
               <span>This is a simulated banking environment. No real money is transferred.</span>
